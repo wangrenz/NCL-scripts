@@ -1,3 +1,4 @@
+;   Modify for plotgrids_new.ncl
 
 ;   Script display location of model domains
 ;   Only works for ARW domains
