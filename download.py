@@ -2,7 +2,9 @@
 
 import os
 import json
-import urllib2
+#import urllib2
+import urllib.request as urllib2
+
 from   datetime import datetime,timedelta
 
 
@@ -29,9 +31,15 @@ def filter_list(full_list):
 
 def download_ec(url_list,name_list,savepath):
 	os.chdir(savepath)
-	print len(url_list)
+	#print len(url_list)
 	for i in range(len(url_list)):
-		os.system('wget -c ' + url_list[i] + ' -O '+ name_list[i] + ' &>/dev/null &')
+		#os.system('wget -c ' + url_list[i] + ' -O '+ name_list[i] + ' &>/dev/null &')
+		print("downloading " + name_list[i])
+		# r = requests.get(url_list[i])
+		# open(name_list[i] , 'wb').write(r.content)
+		r = urllib2.urlopen( url_list[i])
+		content = r.read()
+		open(name_list[i] , 'wb').write(content)
 
 	return
 
@@ -42,7 +50,7 @@ if __name__ == "__main__":
 	srfkeys= [ '10U','10V','DPT','PRS','SSP' ]
 	level = [ '200','500', '700', '850','925','1000']
 	times = [ str(x) for x in range(24,192,24)  ]
-	path = "/home/ylj/ec_thin/"
+	path = "e:/data/ec_thin/"
 	
 	#-----------get time------------------
 	delta = 1
@@ -51,7 +59,7 @@ if __name__ == "__main__":
 		init_t = (datetime.utcnow() - timedelta(days=delta)).strftime("%Y%m%d") + "00"
 	else:
 		init_t = (datetime.utcnow() - timedelta(days=1+delta)).strftime("%Y%m%d") + "12"
-	print init_t
+	#print init_t
 	init_t = "2018111912"
 	
 	savepath = path + init_t
@@ -73,9 +81,10 @@ if __name__ == "__main__":
 	root = json.loads(data)
     
 	if root['returnCode'] == str(0):
-		print root['returnMessage']
+		#print root['returnMessage']
 		full_list = root['DS']
 		url_list,name_list = filter_list(full_list)
+		print(name_list)
 		download_ec(url_list,name_list,savepath)
 	else:
-		print "EC data not exist!"
+		print("EC data not exist!")
