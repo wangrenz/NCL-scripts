@@ -68,7 +68,7 @@ def plot_uv(times, hgt, u, v, wsp, savepath):
 	fig.savefig(savepath + '/' + times[0].strftime("%Y%m%d") +'/'+times[0].strftime("%Y%m%d%H%M%S") +'.png',bbox_inches='tight') #,pad_inches=0.06
 #---------------------------------------------------------------------------------
 
-def plot_uv_vvp(statid, times, hgt, u, v, wsp, vsp, saveFullname):
+def plot_uv_vvp(statid,times, hgt, u, v, wsp, vsp, saveFullname):
 	# plot
 	print(vsp)	
 	time_start = date2num((times[-1] - timedelta(hours=3)))
@@ -166,22 +166,22 @@ def getFilelist(time,str_ymd, statid):
 	mm_1d = time_1d[4:6]
 	dd_1d = time_1d[6:8]
 	str_ymd_1d = '/' + yy_1d + '/' + mm_1d + '/' + dd_1d + '/'
-	file_list = glob.glob(datapath + statid + "/WPR_radar_n"+ str_ymd + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
-	file_list+= glob.glob(datapath + statid + "/WPR_radar_n"+ str_ymd_1d + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
+	file_list = glob.glob(datapath + statid + "/WPR_radar_u"+ str_ymd + "Z_RADA_I_"+statid +"_*_P_WPRD_LC_ROBS.TXT")
+	file_list+= glob.glob(datapath + statid + "/WPR_radar_u"+ str_ymd_1d + "Z_RADA_I_"+statid +"_*_P_WPRD_LC_ROBS.TXT")
 	file_list.sort()
-	idx = file_list.index(datapath + statid + "/WPR_radar_n"+ str_ymd + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+time+".TXT")
+	idx = file_list.index(datapath + statid + "/WPR_radar_u"+ str_ymd + "Z_RADA_I_"+statid +"_"+time+"_P_WPRD_LC_ROBS.TXT")
 	file_list = file_list[0:(idx+1)]
 	hgt, u, v, wsp, vsp = readFilelist(file_list)
-	times =  [ datetime.strptime( re.split('[_.]',i )[-2], '%Y%m%d%H%M%S')  for i in file_list ]
+	times =  [ datetime.strptime( re.split('[_.]',i )[-6], '%Y%m%d%H%M%S')  for i in file_list ]
 	
-	saveFullname = savepath + statid + "/WPR_radar_n/"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time +".png"
+	saveFullname = savepath + statid + "/WPR_radar_u/"+ str_ymd + "/Z_RADA_I_" + statid +"_"+time+"_P_WPRD_LC_ROBS.png"
 	plot_uv_vvp(statid,times, hgt, u.T, v.T, wsp.T,vsp.T , saveFullname)
 	return 
 
 def postLasttime(statid):
 	# "/data/WPR_radar/54399/WPR_radar_n/2019/04/01/Z_RADA_54399_WPRD_MOC_NWQC_ROBS_LC_QI_20190401010000.TXT" 
 	time = datetime.utcnow().strftime('%Y%m%d%H') + '0000'
-	# time = '20190401010000'
+	#time = '20190401010000'
 	yy = time[0:4]
 	mm = time[4:6]
 	dd = time[6:8]
@@ -192,13 +192,14 @@ def postLasttime(statid):
 	mm_1hr = time_1hr[4:6]
 	dd_1hr = time_1hr[6:8]
 	str_ymd_1hr = '/' + yy_1hr + '/' + mm_1hr + '/' + dd_1hr + '/'
-	if os.path.exists(datapath + statid + "/WPR_radar_n/"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time +".TXT"):
+	
+	# Z_RADA_I_54399_20190401001800_P_WPRD_LC_ROBS.TXT
+	if os.path.exists(datapath + statid + "/WPR_radar_u/"+ str_ymd + "/Z_RADA_I_"+ statid +"_"+time+"_P_WPRD_LC_ROBS.TXT"):
 		getFilelist(time, str_ymd, statid)
-	elif os.path.exists(datapath + statid + "/WPR_radar_n/"+ str_ymd_1hr + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time_1hr +".TXT"):
+	elif os.path.exists(datapath + statid + "/WPR_radar_u/"+ str_ymd_1hr + "/Z_RADA_I_"+ statid +"_"+time_1hr+"_P_WPRD_LC_ROBS.TXT"):
 		getFilelist(time_1hr, str_ymd_1hr, statid)
 	else:
 		pass
-		
 	#print(times)
 
 
