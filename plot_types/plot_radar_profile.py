@@ -126,7 +126,7 @@ def readFilelist(file_list):
 	n_lvl = 55
 	new_line = [ [0 for i in range(7)] for i in range(n_lvl)]
 	for it in range(len(file_list)):
-		f = open(robs_list[it],"r")
+		f = open(file_list[it],"r")
 		line = f.readlines()
 		for i in range(3,+n_lvl):
 			line[i] = line[i].replace('/','9')
@@ -153,7 +153,7 @@ def readFilelist(file_list):
 	v   = -np.cos(np.pi * (wdir) / 180.0) * wsp
 	u = u * 2.5
 	v = v * 2.5
-	return hgt, u, v, wsp
+	return hgt, u, v, wsp, vsp
 
 #---------------------------------------------------------------------------------
 def getFilelist(time,str_ymd, statid):
@@ -162,15 +162,17 @@ def getFilelist(time,str_ymd, statid):
 	mm_1d = time_1d[4:6]
 	dd_1d = time_1d[6:8]
 	str_ymd_1d = '/' + yy_1d + '/' + mm_1d + '/' + dd_1d + '/'
-	file_list = glob.glob(datapath + statid + "WPR_radar_n"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
-	file_list+= glob.glob(datapath + statid + "WPR_radar_n"+ str_ymd_1d + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
+	file_list = glob.glob(datapath + statid + "/WPR_radar_n"+ str_ymd + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
+	file_list+= glob.glob(datapath + statid + "/WPR_radar_n"+ str_ymd_1d + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_*.TXT")
 	file_list.sort()
-	idx = file_list.index(datapath + statid + "WPR_radar_n"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+time+".TXT")
+	idx = file_list.index(datapath + statid + "/WPR_radar_n"+ str_ymd + "Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+time+".TXT")
 	file_list = file_list[0:(idx+1)]
-	hgt, u, v, wsp = readFilelist(file_list)
-	times =  [ datetime.strptime( re.split('[_.]',i )[-2], '%Y%m%d%H%M%S')  for i in robs_list ]
+	hgt, u, v, wsp, vsp = readFilelist(file_list)
+	times =  [ datetime.strptime( re.split('[_.]',i )[-2], '%Y%m%d%H%M%S')  for i in file_list ]
 	
-	return times, hgt, u, v, wsp 
+	saveFullname = savepath + statid + "/WPR_radar_n/"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time +".png"
+	plot_uv_vvp(times, hgt, u.T, v.T, wsp.T,vsp.T , saveFullname)
+	return 
 
 def postLasttime(statid):
 	# "/data/WPR_radar/54399/WPR_radar_n/2019/04/01/Z_RADA_54399_WPRD_MOC_NWQC_ROBS_LC_QI_20190401010000.TXT" 
@@ -181,14 +183,12 @@ def postLasttime(statid):
 	str_ymd = '/' + yy + '/' + mm + '/' + dd + '/'
 
 	if os.path.exists(datapath + statid + "/WPR_radar_n/"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time +".TXT"):
-		times, hgt, u, v ,wsp = getFilelist(time, str_ymd, statid)
-		saveFullname = savepath + statid + "/WPR_radar_n/"+ str_ymd + "/Z_RADA_"+ statid +"_WPRD_MOC_NWQC_ROBS_LC_QI_"+ time +".png"
-		plot_uv_vvp(times, hgt, u.T, v.T, wsp.T, saveFullname)
+		getFilelist(time, str_ymd, statid)
+
 		
 	#print(times)
 
 
-	print(u)
 	#plot_uv(times, hgt, u.T, v.T, wsp.T, savepath)
 
 
