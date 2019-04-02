@@ -68,7 +68,7 @@ def plot_uv(times, hgt, u, v, wsp, savepath):
 
 def plot_uv_vvp(times, hgt, u, v, wsp, vsp, saveFullname):
 	# plot
-	time_start = time_start(times[-1] - timedelta(hours=3))
+	time_start = (times[-1] - timedelta(hours=3))
 	n_time = date2num(times)
 	X, Y = np.meshgrid( date2num(times), hgt)
 
@@ -76,8 +76,8 @@ def plot_uv_vvp(times, hgt, u, v, wsp, vsp, saveFullname):
 	
 	plt.rcParams["font.sans-serif"] = 'Times New Roman' #  ["Helvetica"] #['SimHei'] Times New Roman
 	plt.rcParams['axes.unicode_minus']=False
-	cnfont = {'fontname':'SimHei'} # 楷体: KaiTi 黑体: SimHei 仿宋: FangSong
-	ax.set_title("58141-淮安(118.92,33.63)                                                          产品名称：风廓线+垂直速度",loc='left',fontsize=12,**cnfont)
+	# cnfont = {'fontname':'SimHei'} # 楷体: KaiTi 黑体: SimHei 仿宋: FangSong
+	ax.set_title("58141",loc='left',fontsize=12, )
 	#plt.xlabel('TIME',fontsize=6)
 	#plt.ylabel('ALT:M',fontsize=6,rotation='horizontal',position=(0.2,1.01) ) #rotation='horizontal',position=(0.2,0.01) 
 	ax.text(-0.02, 1.012,'ALT:M',verticalalignment='center',horizontalalignment='center',transform=ax.transAxes,color='k', fontsize=6.5)
